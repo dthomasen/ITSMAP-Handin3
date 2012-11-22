@@ -31,7 +31,7 @@ public class GetStationsService extends Service{
     /** method for clients */
     public String getMyMessage() {
     	try {
-    		result = new AsyncHttpHandler().execute().get();
+    		result = new AsyncHttpHandler().execute("http://stog.itog.dk/","itog/action/list/format/json").get();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
