@@ -1,6 +1,6 @@
 package dk.iha.whooper.trainstations;
 
-public class Stations {
+public class Station {
 	private String name;
 	private int wid;
 	private float x;

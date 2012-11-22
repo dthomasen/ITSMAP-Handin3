@@ -20,6 +20,7 @@ public class Stations_Activity extends Activity implements OnClickListener{
 	private TextView textField1;
 	private GetStationsService getStationsService;
     private boolean mBound = false;
+    private Station[] stations;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +73,13 @@ public class Stations_Activity extends Activity implements OnClickListener{
 		switch(v.getId()){
 		case R.id.button1:
 			Log.d(TAG,"Button clicked");
-			textField1.setText(getStationsService.getMyMessage());
+			stations = getStationsService.getMyMessage();
+			StringBuilder sb = new StringBuilder();
+			for(Station s : stations){
+				sb.append(s.getName());
+				sb.append("\n");
+			}
+			textField1.setText(sb);
 			break;
 		}
 	}

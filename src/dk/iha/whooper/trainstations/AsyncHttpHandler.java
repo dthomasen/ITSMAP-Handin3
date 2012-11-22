@@ -56,11 +56,7 @@ public class AsyncHttpHandler extends AsyncTask<String, Boolean, String>{
 			}
   		}
   		
-  		Gson gson = new Gson();
-  		
-  		Stations[] stations = gson.fromJson(result, Stations[].class);
-  		
-		return stations[0].getName();
+		return result;
 	}
 	
 	protected void onPostExecute(String result){

@@ -2,6 +2,8 @@ package dk.iha.whooper.trainstations;
 
 import java.util.concurrent.ExecutionException;
 
+import com.google.gson.Gson;
+
 
 import android.app.Service;
 import android.content.Intent;
@@ -29,7 +31,7 @@ public class GetStationsService extends Service{
     }
 
     /** method for clients */
-    public String getMyMessage() {
+    public Station[] getMyMessage() {
     	try {
     		result = new AsyncHttpHandler().execute("http://stog.itog.dk/","itog/action/list/format/json").get();
 		} catch (InterruptedException e) {
@@ -37,7 +39,10 @@ public class GetStationsService extends Service{
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
-	    return result;
+    	
+  		Station[] stations = new Gson().fromJson(result, Station[].class);
+  		
+	    return stations;
 	}
 
 }
