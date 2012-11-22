@@ -18,6 +18,7 @@ public class GetStationsService extends Service{
 	  // Binder given to clients
     private final IBinder mBinder = new GetStationsBinder();
     private String result = "";
+    private Station[] stations = null;
 
     public class GetStationsBinder extends Binder {
         GetStationsService getService() {
@@ -29,9 +30,13 @@ public class GetStationsService extends Service{
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
-
+    
+    public Station[] getStations(){
+    	return stations;
+    }
+    
     /** method for clients */
-    public Station[] getMyMessage() {
+    public void updateStations() {
     	try {
     		result = new AsyncHttpHandler().execute("http://stog.itog.dk/","itog/action/list/format/json").get();
 		} catch (InterruptedException e) {
@@ -40,9 +45,10 @@ public class GetStationsService extends Service{
 			e.printStackTrace();
 		}
     	
-  		Station[] stations = new Gson().fromJson(result, Station[].class);
+  		stations = new Gson().fromJson(result, Station[].class);
+  		Intent i = new Intent("StationsUpdated");
   		
-	    return stations;
-	}
+  		sendBroadcast(i);
+  	}
 
 }

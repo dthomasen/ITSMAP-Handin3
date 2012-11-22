@@ -4,23 +4,24 @@
     android:layout_height="match_parent"
     tools:context=".Stations_Activity" >
 
+    <Button
+        android:id="@+id/OpdaterButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="48dp"
+        android:layout_marginRight="96dp"
+        android:text="Opdater" />
+
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="242dp"
-        android:layout_marginTop="86dp"
+        android:layout_marginLeft="129dp"
+        android:layout_marginTop="87dp"
         android:text="TextView" />
-
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="264dp"
-        android:layout_toRightOf="@+id/textView1"
-        android:text="Button" />
 
 </RelativeLayout>

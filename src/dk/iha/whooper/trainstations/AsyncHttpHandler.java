@@ -60,7 +60,6 @@ public class AsyncHttpHandler extends AsyncTask<String, Boolean, String>{
 	}
 	
 	protected void onPostExecute(String result){
-		Log.d("MESSAGE", result);
 	}
 	
 	public String convertStreamToString(InputStream is) throws IOException {

@@ -4,9 +4,11 @@ import dk.iha.whooper.trainstations.GetStationsService.GetStationsBinder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.util.Log;
 import android.view.Menu;
@@ -17,17 +19,30 @@ import android.widget.TextView;
 public class Stations_Activity extends Activity implements OnClickListener{
 
 	private static final String TAG="Stations_Activity";
-	private TextView textField1;
 	private GetStationsService getStationsService;
     private boolean mBound = false;
     private Station[] stations;
+    private BroadcastReceiver updateReciever;
+    private TextView tf;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_stations_main);
-		textField1 = (TextView) findViewById(R.id.textView1);
-		findViewById(R.id.button1).setOnClickListener(this);
+		findViewById(R.id.OpdaterButton).setOnClickListener(this);
+		
+		tf = (TextView) findViewById(R.id.textView1);
+		
+		updateReciever = new BroadcastReceiver() {
+	            @Override
+	            public void onReceive(Context context, Intent intent) {
+	                Log.d(TAG,"StationsUpdated broadcast recieved");
+	                stations = getStationsService.getStations();
+	                tf.setText(stations[0].getName());
+	            }
+	        };
+	        
+	        this.registerReceiver(updateReciever, new IntentFilter("StationsUpdated"));
 	}
 
 	@Override
@@ -71,17 +86,21 @@ public class Stations_Activity extends Activity implements OnClickListener{
     @Override
 	public void onClick(View v) {
 		switch(v.getId()){
-		case R.id.button1:
-			Log.d(TAG,"Button clicked");
-			stations = getStationsService.getMyMessage();
-			StringBuilder sb = new StringBuilder();
-			for(Station s : stations){
-				sb.append(s.getName());
-				sb.append("\n");
-			}
-			textField1.setText(sb);
+		case R.id.OpdaterButton:
+			Log.d(TAG,"UpdateButton clicked");
+			getStationsService.updateStations();
 			break;
 		}
+		
+//		Stations_Activity.this.runOnUiThread(new Runnable(){
+//
+//			@Override
+//			public void run() {
+//				//DO what you need to
+//			}
+//			
+//		});
+		
 	}
 }
 
