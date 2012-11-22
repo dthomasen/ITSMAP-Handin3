@@ -12,5 +12,4 @@ public class UpdateReciever extends BroadcastReceiver{
 	public void onReceive(Context context, Intent intent) {
 		Log.d(TAG,"OnRecieve called");
 	}
-	
 }

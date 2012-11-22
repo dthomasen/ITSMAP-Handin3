@@ -1,7 +1,11 @@
 package dk.iha.whooper.trainstations;
 
+import java.util.concurrent.ExecutionException;
+
+
 import android.app.Service;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -11,6 +15,7 @@ public class GetStationsService extends Service{
 	private static final String TAG="GetStationsService";
 	  // Binder given to clients
     private final IBinder mBinder = new GetStationsBinder();
+    private String result = "";
 
     public class GetStationsBinder extends Binder {
         GetStationsService getService() {
@@ -25,7 +30,14 @@ public class GetStationsService extends Service{
 
     /** method for clients */
     public String getMyMessage() {
-      return "it's working :D";
-    }
-	
+    	try {
+    		result = new AsyncHttpHandler().execute().get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+	    return result;
+	}
+
 }
