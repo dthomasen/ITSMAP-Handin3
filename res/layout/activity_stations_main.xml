@@ -5,10 +5,22 @@
     tools:context=".Stations_Activity" >
 
     <TextView
+        android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="242dp"
+        android:layout_marginTop="86dp"
+        android:text="TextView" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:text="@string/hello_world" />
+        android:layout_marginLeft="264dp"
+        android:layout_toRightOf="@+id/textView1"
+        android:text="Button" />
 
 </RelativeLayout>
