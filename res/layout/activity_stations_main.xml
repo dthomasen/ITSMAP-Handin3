@@ -13,15 +13,9 @@
         android:layout_marginBottom="48dp"
         android:layout_marginRight="96dp"
         android:text="Opdater" />
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="129dp"
-        android:layout_marginTop="87dp"
-        android:text="TextView" />
-
+	<ListView
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@android:id/list"
+    />
 </RelativeLayout>

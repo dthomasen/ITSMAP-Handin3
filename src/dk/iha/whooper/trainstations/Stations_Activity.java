@@ -1,9 +1,12 @@
 package dk.iha.whooper.trainstations;
 
+import java.util.ArrayList;
+
 import dk.iha.whooper.trainstations.GetStationsService.GetStationsBinder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,31 +17,43 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
-public class Stations_Activity extends Activity implements OnClickListener{
+public class Stations_Activity extends ListActivity implements OnClickListener{
 
 	private static final String TAG="Stations_Activity";
 	private GetStationsService getStationsService;
     private boolean mBound = false;
     private Station[] stations;
+    private ArrayList<String> stationNames;
     private BroadcastReceiver updateReciever;
-    private TextView tf;
+    private ArrayAdapter<String> adapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_stations_main);
 		findViewById(R.id.OpdaterButton).setOnClickListener(this);
-		
-		tf = (TextView) findViewById(R.id.textView1);
-		
+		stationNames = new ArrayList<String>();
+		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stationNames);
 		updateReciever = new BroadcastReceiver() {
 	            @Override
 	            public void onReceive(Context context, Intent intent) {
 	                Log.d(TAG,"StationsUpdated broadcast recieved");
 	                stations = getStationsService.getStations();
-	                tf.setText(stations[0].getName());
+	                for(Station s : stations){
+	                	stationNames.add(s.getName());
+	                }
+	                
+	        		Stations_Activity.this.runOnUiThread(new Runnable(){
+	        			@Override
+	        			public void run() {
+	        				setListAdapter(adapter);
+	        			}
+	        		});
 	            }
 	        };
 	        
@@ -91,15 +106,6 @@ public class Stations_Activity extends Activity implements OnClickListener{
 			getStationsService.updateStations();
 			break;
 		}
-		
-//		Stations_Activity.this.runOnUiThread(new Runnable(){
-//
-//			@Override
-//			public void run() {
-//				//DO what you need to
-//			}
-//			
-//		});
 		
 	}
 }
