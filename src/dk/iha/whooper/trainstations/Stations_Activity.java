@@ -3,6 +3,7 @@ package dk.iha.whooper.trainstations;
 import java.util.ArrayList;
 
 import dk.iha.whooper.trainstations.GetStationsService.GetStationsBinder;
+import android.net.MailTo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.app.Activity;
@@ -13,16 +14,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class Stations_Activity extends ListActivity implements OnClickListener{
+public class Stations_Activity extends ListActivity implements OnClickListener, TextWatcher{
 
 	private static final String TAG="Stations_Activity";
 	private GetStationsService getStationsService;
@@ -31,13 +36,19 @@ public class Stations_Activity extends ListActivity implements OnClickListener{
     private ArrayList<String> stationNames;
     private BroadcastReceiver updateReciever;
     private ArrayAdapter<String> adapter;
+    private EditText filterInput;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_stations_main);
+		
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN); //Don't show keyboard
+		
 		findViewById(R.id.OpdaterButton).setOnClickListener(this);
 		stationNames = new ArrayList<String>();
+		filterInput = (EditText) findViewById(R.id.FilterText);
+		filterInput.addTextChangedListener(this);
 		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stationNames);
 		updateReciever = new BroadcastReceiver() {
 	            @Override
@@ -57,7 +68,7 @@ public class Stations_Activity extends ListActivity implements OnClickListener{
 	            }
 	        };
 	        
-	        this.registerReceiver(updateReciever, new IntentFilter("StationsUpdated"));
+        this.registerReceiver(updateReciever, new IntentFilter("StationsUpdated"));
 	}
 
 	@Override
@@ -70,19 +81,19 @@ public class Stations_Activity extends ListActivity implements OnClickListener{
 	protected void onStart(){
 		super.onStart();
 		Intent intent = new Intent(this, GetStationsService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        bindService(intent, connectionToService, Context.BIND_AUTO_CREATE);
 	}
 	
 	@Override
     protected void onStop() {
         super.onStop();
         if (mBound) {
-            unbindService(mConnection);
+            unbindService(connectionToService);
             mBound = false;
         }
     }
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private ServiceConnection connectionToService = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className,
@@ -90,6 +101,7 @@ public class Stations_Activity extends ListActivity implements OnClickListener{
         	GetStationsBinder binder = (GetStationsBinder) service;
             getStationsService = binder.getService();
             mBound = true;
+            getStationsService.updateStations();
         }
 
         @Override
@@ -98,6 +110,7 @@ public class Stations_Activity extends ListActivity implements OnClickListener{
         }
     };
 
+    //Event handlers
     @Override
 	public void onClick(View v) {
 		switch(v.getId()){
@@ -107,6 +120,23 @@ public class Stations_Activity extends ListActivity implements OnClickListener{
 			break;
 		}
 		
+	}
+
+	@Override
+	public void afterTextChanged(Editable arg0) {
+		
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+			int arg3) {
+		
+	}
+
+	@Override
+	public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+		// TODO Auto-generated method stub
+		Stations_Activity.this.adapter.getFilter().filter(cs);
 	}
 }
 
