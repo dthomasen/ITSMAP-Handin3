@@ -14,6 +14,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -42,7 +44,6 @@ public class Stations_Activity extends ListActivity implements OnClickListener, 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_stations_main);
-		
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN); //Don't show keyboard
 		
 		findViewById(R.id.OpdaterButton).setOnClickListener(this);
@@ -53,7 +54,7 @@ public class Stations_Activity extends ListActivity implements OnClickListener, 
 		updateReciever = new BroadcastReceiver() {
 	            @Override
 	            public void onReceive(Context context, Intent intent) {
-	                Log.d(TAG,"StationsUpdated broadcast recieved");
+	                Log.d(TAG,"StationsUpdated broadcast recieved message: "+getStationsService.getStations()[0].getName());
 	                stations = getStationsService.getStations();
 	                for(Station s : stations){
 	                	stationNames.add(s.getName());
@@ -91,7 +92,14 @@ public class Stations_Activity extends ListActivity implements OnClickListener, 
             unbindService(connectionToService);
             mBound = false;
         }
+        unregisterReceiver(updateReciever);
     }
+	
+	protected void onRestart(){
+		super.onRestart();
+		Log.d(TAG,"OnRestart called");
+		this.registerReceiver(updateReciever, new IntentFilter("StationsUpdated"));
+	}
 
     private ServiceConnection connectionToService = new ServiceConnection() {
 
@@ -124,13 +132,11 @@ public class Stations_Activity extends ListActivity implements OnClickListener, 
 
 	@Override
 	public void afterTextChanged(Editable arg0) {
-		
 	}
 
 	@Override
 	public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
 			int arg3) {
-		
 	}
 
 	@Override

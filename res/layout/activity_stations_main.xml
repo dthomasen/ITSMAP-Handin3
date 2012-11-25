@@ -2,39 +2,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".Stations_Activity" >
 
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="650dp"
-        android:layout_height="wrap_content" >
-    </ListView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
-
-        <EditText
+         <EditText
             android:id="@+id/FilterText"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="120dp"
+            android:ems="10"
             android:hint="Søgning"
-            android:windowSoftInputMode="stateHidden"
-            android:ems="10" >
-        </EditText>
+            android:windowSoftInputMode="stateHidden" />
         
         <Button
             android:id="@+id/OpdaterButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="400dp"
             android:text="Opdater" />
+    </LinearLayout>
+    
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+    </ListView>
 
-       
-
-    </RelativeLayout>
+    
 
 </LinearLayout>
