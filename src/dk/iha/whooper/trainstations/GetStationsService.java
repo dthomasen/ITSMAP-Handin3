@@ -1,5 +1,6 @@
 package dk.iha.whooper.trainstations;
 
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import com.google.gson.Gson;
@@ -18,6 +19,7 @@ public class GetStationsService extends Service{
 	  // Binder given to clients
     private final IBinder mBinder = new GetStationsBinder();
     private String result = "";
+    private HashMap<String, Station> stationsMap = new HashMap<String, Station>();
     private Station[] stations = null;
 
     public class GetStationsBinder extends Binder {
@@ -29,6 +31,10 @@ public class GetStationsService extends Service{
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+    
+    public HashMap<String, Station> getStationsMap(){
+    	return stationsMap;
     }
     
     public Station[] getStations(){
@@ -46,6 +52,10 @@ public class GetStationsService extends Service{
 		}
     	
   		stations = new Gson().fromJson(result, Station[].class);
+  		stationsMap.clear();
+  		for(Station s : stations){
+  			stationsMap.put(s.getName(), s);
+  		}
   		Intent i = new Intent("StationsUpdated");
   		
   		sendBroadcast(i);

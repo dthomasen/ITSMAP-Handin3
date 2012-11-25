@@ -1,16 +1,19 @@
 package dk.iha.whooper.trainstations;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import dk.iha.whooper.trainstations.GetStationsService.GetStationsBinder;
 import android.net.MailTo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -23,13 +26,16 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
-public class Stations_Activity extends ListActivity implements OnClickListener, TextWatcher{
+public class Stations_Activity extends ListActivity implements OnItemClickListener, OnClickListener, TextWatcher{
 
 	private static final String TAG="Stations_Activity";
 	private GetStationsService getStationsService;
@@ -39,6 +45,8 @@ public class Stations_Activity extends ListActivity implements OnClickListener, 
     private BroadcastReceiver updateReciever;
     private ArrayAdapter<String> adapter;
     private EditText filterInput;
+    private ListView stationsList;
+    private HashMap<String, Station> stationsMap;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,25 +55,24 @@ public class Stations_Activity extends ListActivity implements OnClickListener, 
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN); //Don't show keyboard
 		
 		findViewById(R.id.OpdaterButton).setOnClickListener(this);
+		stationsList = getListView();
 		stationNames = new ArrayList<String>();
+		stationsMap = new HashMap<String, Station>();
 		filterInput = (EditText) findViewById(R.id.FilterText);
 		filterInput.addTextChangedListener(this);
 		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, stationNames);
+		stationsList.setAdapter(adapter);
+		stationsList.setOnItemClickListener(this);
 		updateReciever = new BroadcastReceiver() {
 	            @Override
 	            public void onReceive(Context context, Intent intent) {
-	                Log.d(TAG,"StationsUpdated broadcast recieved message: "+getStationsService.getStations()[0].getName());
+	                Log.d(TAG,"StationsUpdated broadcast recieved");
 	                stations = getStationsService.getStations();
 	                for(Station s : stations){
 	                	stationNames.add(s.getName());
 	                }
-	                
-	        		Stations_Activity.this.runOnUiThread(new Runnable(){
-	        			@Override
-	        			public void run() {
-	        				setListAdapter(adapter);
-	        			}
-	        		});
+	                stationsMap = getStationsService.getStationsMap();
+	                adapter.notifyDataSetChanged();
 	            }
 	        };
 	        
@@ -143,6 +150,27 @@ public class Stations_Activity extends ListActivity implements OnClickListener, 
 	public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
 		// TODO Auto-generated method stub
 		Stations_Activity.this.adapter.getFilter().filter(cs);
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		Log.d(TAG,"StationsListItem clicked");
+		Station choosenStation = stationsMap.get(((TextView) view).getText());
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("WID: "+Integer.toString(choosenStation.getWid())+
+				"\nX koordinat: "+Float.toString(choosenStation.getX())+
+				"\nY koordinat: "+Float.toString(choosenStation.getY()))
+		       .setTitle(choosenStation.getName())
+		       .setIcon(R.drawable.ic_launcher);
+		
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+			}
+		});
+		AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 }
 
